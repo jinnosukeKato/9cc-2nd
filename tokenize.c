@@ -36,6 +36,18 @@ bool consume(char *op) {
 }
 
 /*
+次のトークンが識別子の場合にトークンを1つ読み進めてそのトークンを返す．
+識別子でない場合はなにもせずNULLを返す，
+*/
+Token *consume_ident() {
+  if (token->kind != TK_IDENT) return NULL;
+
+  Token *t = token;
+  token = token->next;
+  return t;
+}
+
+/*
 次のトークンが期待している記号の時には，トークンを1つ読み進める．
 それ以外の場合にはエラーを報告する．
 */
@@ -97,13 +109,21 @@ Token *tokenize() {
     }
 
     // 1文字の演算子
-    if (strchr("+-*/()<>", *p)) {
+    if (strchr("+-*/()<>;=", *p)) {
       // 現在の文字ポインタpをnew_tokenに渡してからインクリメントしている
       cur = new_token(TK_RESERVED, cur, p, 1);
       p += 1;
       continue;
     }
 
+    // 1文字の変数
+    if ('a' <= *p && *p <= 'z') {
+      cur = new_token(TK_IDENT, cur, p, 1);
+      p += 1;
+      continue;
+    }
+
+    // 数値
     if (isdigit(*p)) {
       cur = new_token(TK_NUM, cur, p, 0);
       char *q = p;
