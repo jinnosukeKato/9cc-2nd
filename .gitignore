@@ -1,5 +1,7 @@
+.vscode/
+.vscode/*
 *~
-~.o
+*.o
 tmp*
 a.out
 9cc
