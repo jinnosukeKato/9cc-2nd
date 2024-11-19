@@ -35,6 +35,18 @@ Token *new_token(TokenKind kind, Token *cur, char *str, int len);
 Token *tokenize();
 
 // parse.c
+// ローカル変数の型
+typedef struct LVar LVar;
+
+struct LVar {
+  LVar *next;  // 次のローカル変数かNULL
+  char *name;  // 変数名
+  int len;     // 変数名の長さ
+  int offset;  // RBPからのオフセット
+};
+
+extern LVar *locals;
+
 // 抽象構文木のノードの種類
 typedef enum {
   ND_ADD,     // +

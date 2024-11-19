@@ -10,6 +10,9 @@ int main(int argc, char **argv) {
   user_input = argv[1];
   // トークナイズ
   token = tokenize();
+
+  // ローカルのメモリ領域を確保
+  locals = calloc(1, sizeof(LVar));
   // パース
   program();
 
@@ -19,10 +22,10 @@ int main(int argc, char **argv) {
   printf("main:\n");
 
   // プロローグ
-  // 変数26個分の領域を確保する
+  // ローカル変数の領域を確保する
   printf("  push rbp\n");
   printf("  mov rbp, rsp\n");
-  printf("  sub rsp, 208\n");
+  printf("  sub rsp, %d\n", locals->offset);
 
   // 先頭の式から順にコード生成
   for (int i = 0; code[i]; i++) {

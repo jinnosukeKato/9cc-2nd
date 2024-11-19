@@ -35,5 +35,7 @@ assert 0 "10 <= 2;"
 assert 9 "a = 9;"
 assert 14 "a = 3; b = 5 * 6 - 8; a + b / 2;"
 assert 5 "a=b=c=5;"
+assert 80 "foo = 40; foo*2;"
+assert 35 "bar1 = 2 + 3; bar1 * (4 + 3);"
 
 echo OK
