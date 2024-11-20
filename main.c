@@ -28,6 +28,7 @@ int main(int argc, char **argv) {
   printf("  sub rsp, %d\n", locals->offset);
 
   // 先頭の式から順にコード生成
+  label_if = 0;  // ifのラベル
   for (int i = 0; code[i]; i++) {
     gen(code[i]);
 

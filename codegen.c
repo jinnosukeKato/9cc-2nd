@@ -10,8 +10,19 @@ void gen_lval(Node *node) {
   printf("  push rax\n");
 }
 
+int label_if;
+
 void gen(Node *node) {
   switch (node->kind) {
+    case ND_IF:
+      gen(node->lhs);
+      printf("  pop rax\n");               // lhs(評価式)の値を取る
+      printf("  cmp rax, 0\n");            // 評価式==0か→結果はZFに
+      printf("  je .Lend%d\n", label_if);  // .Lendにif equal(ZF=0)ならjump
+
+      gen(node->rhs);
+      printf(".Lend%d:\n", label_if);
+      return;
     case ND_RETURN:
       gen(node->lhs);
       printf("  pop rax\n");  // スタックトップ(式の結果があるはず)からraxにpop

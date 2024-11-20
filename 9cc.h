@@ -9,6 +9,7 @@
 typedef enum {
   TK_RESERVED,  // 記号
   TK_RETURN,    // return
+  TK_IF,        // if
   TK_IDENT,     // 識別子
   TK_NUM,       // 整数トークン
   TK_EOF,       // 入力の終わりを表すトークン
@@ -51,6 +52,7 @@ extern LVar *locals;
 // 抽象構文木のノードの種類
 typedef enum {
   ND_RETURN,  // return
+  ND_IF,      // if
   ND_ADD,     // +
   ND_SUB,     // -
   ND_MUL,     // *
@@ -96,3 +98,5 @@ Node *unary();
 // codegen.c
 void gen_lval(Node *node);
 void gen(Node *node);
+
+extern int label_if;

@@ -38,9 +38,23 @@ void program() {
   code[i] = NULL;
 }
 
-// stmt := expr ";" | "return" expr ";"
+/*
+  stmt := expr ";"
+       | "if" "(" expr ")" stmt ("else" stmt)?
+       | "return" expr ";"
+*/
 Node *stmt() {
   Node *node;
+  if (consume("if")) {
+    node = calloc(1, sizeof(Node));
+    node->kind = ND_IF;
+    expect("(");
+    node->lhs = expr();
+    expect(")");
+    node->rhs = stmt();
+    return node;
+  }
+
   if (consume("return")) {
     node = calloc(1, sizeof(Node));
     node->kind = ND_RETURN;
