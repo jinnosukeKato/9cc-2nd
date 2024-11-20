@@ -30,6 +30,7 @@ LVar *find_lvar(Token *tok) {
   return NULL;
 }
 
+// program := stmt*
 void program() {
   int i = 0;
   while (!at_eof()) code[i++] = stmt();
@@ -37,10 +38,19 @@ void program() {
   code[i] = NULL;
 }
 
-// stmt := expr ";"
+// stmt := expr ";" | "return" expr ";"
 Node *stmt() {
-  Node *node = expr();
+  Node *node;
+  if (consume("return")) {
+    node = calloc(1, sizeof(Node));
+    node->kind = ND_RETURN;
+    node->lhs = expr();
+  } else {
+    node = expr();
+  }
+
   expect(";");
+
   return node;
 }
 

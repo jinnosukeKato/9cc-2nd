@@ -27,8 +27,8 @@ void error_at(char *loc, char *fmt, ...) {
 真を返す．それ以外の場合には偽を返す．
 */
 bool consume(char *op) {
-  if (token->kind != TK_RESERVED || strlen(op) != token->len ||
-      memcmp(token->str, op, token->len))
+  if ((token->kind != TK_RESERVED && token->kind != TK_RETURN) ||
+      strlen(op) != token->len || memcmp(token->str, op, token->len))
     return false;
 
   token = token->next;
@@ -113,6 +113,13 @@ Token *tokenize() {
       // 現在の文字ポインタpをnew_tokenに渡してからインクリメントしている
       cur = new_token(TK_RESERVED, cur, p, 1);
       p += 1;
+      continue;
+    }
+
+    // return
+    if (strncmp(p, "return", 6) == 0 && !isalnum(p[6])) {
+      cur = new_token(TK_RETURN, cur, p, 6);
+      p += 6;
       continue;
     }
 
