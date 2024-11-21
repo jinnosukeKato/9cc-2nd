@@ -27,13 +27,25 @@ void error_at(char *loc, char *fmt, ...) {
 真を返す．それ以外の場合には偽を返す．
 */
 bool consume(char *op) {
-  if ((token->kind != TK_RESERVED && token->kind != TK_RETURN &&
-       token->kind != TK_IF && token->kind != TK_ELSE) ||
-      strlen(op) != token->len || memcmp(token->str, op, token->len))
+  if (token->kind != TK_RESERVED || strlen(op) != token->len ||
+      memcmp(token->str, op, token->len))
     return false;
 
   token = token->next;
   return true;
+}
+
+/*
+次のトークンが指定されたトークンの場合トークンを1つ消費して真を返す．
+それ以外の場合には偽を返す．
+*/
+bool consume_token(TokenKind tok) {
+  if (token->kind == tok) {
+    token = token->next;
+    return true;
+  }
+
+  return false;
 }
 
 /*

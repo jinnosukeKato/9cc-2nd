@@ -45,19 +45,20 @@ void program() {
 */
 Node *stmt() {
   Node *node;
-  if (consume("if")) {
+  if (consume_token(TK_IF)) {
     node = calloc(1, sizeof(Node));
     node->kind = ND_IF;
     expect("(");
     node->lhs = expr();
     expect(")");
     node->rhs = stmt();
-    if (consume("else")) node->els = stmt();  // else句がくる場合のみelsを持つ
+    if (consume_token(TK_ELSE))
+      node->els = stmt();  // else句がくる場合のみelsを持つ
 
     return node;
   }
 
-  if (consume("return")) {
+  if (consume_token(TK_RETURN)) {
     node = calloc(1, sizeof(Node));
     node->kind = ND_RETURN;
     node->lhs = expr();
