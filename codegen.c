@@ -11,17 +11,48 @@ void gen_lval(Node *node) {
 }
 
 int label_if;
+int label_else;
 
 void gen(Node *node) {
   switch (node->kind) {
     case ND_IF:
-      gen(node->lhs);
-      printf("  pop rax\n");               // lhs(評価式)の値を取る
-      printf("  cmp rax, 0\n");            // 評価式==0か→結果はZFに
-      printf("  je .Lend%d\n", label_if);  // .Lendにif equal(ZF=0)ならjump
+      /*
+        if (stmt)
+          expr;
+        ↓
+        if (stmt == 0)
+          goto end;
+        expr;
+        end:(ここに飛ぶ)
 
-      gen(node->rhs);
-      printf(".Lend%d:\n", label_if);
+        if (stmt)
+          expr;
+        else
+          expr_els;
+        ↓
+        if (stmt == 0)
+          goto els;
+        expr;
+        goto end;
+        els:
+          expr_els;
+        end:
+      */
+      gen(node->lhs);
+      printf("  pop rax\n");     // lhs(評価式)の値を取る
+      printf("  cmp rax, 0\n");  // 評価式==0(偽か)→結果はZFに
+      if (node->els) {
+        // else節を持つ場合
+        printf("  je .Lelse%d\n", label_else);  // .LelseXXXに偽ならjump
+        gen(node->rhs);
+        printf("  jmp .Lend%d\n", label_if);
+        printf(".Lelse%d:\n", label_else++);
+        gen(node->els);
+      } else {
+        printf("  je .Lend%d\n", label_if);  // .LendXXXに偽(ZF=0)ならjump
+        gen(node->rhs);
+      }
+      printf(".Lend%d:\n", label_if++);
       return;
     case ND_RETURN:
       gen(node->lhs);

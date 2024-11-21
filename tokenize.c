@@ -28,7 +28,7 @@ void error_at(char *loc, char *fmt, ...) {
 */
 bool consume(char *op) {
   if ((token->kind != TK_RESERVED && token->kind != TK_RETURN &&
-       token->kind != TK_IF) ||
+       token->kind != TK_IF && token->kind != TK_ELSE) ||
       strlen(op) != token->len || memcmp(token->str, op, token->len))
     return false;
 
@@ -128,6 +128,13 @@ Token *tokenize() {
     if (strncmp(p, "if", 2) == 0 && !isalnum(p[2])) {
       cur = new_token(TK_IF, cur, p, 2);
       p += 2;
+      continue;
+    }
+
+    // else
+    if (strncmp(p, "else", 4) == 0 && !isalnum(p[4])) {
+      cur = new_token(TK_ELSE, cur, p, 4);
+      p += 4;
       continue;
     }
 

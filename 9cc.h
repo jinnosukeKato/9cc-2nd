@@ -10,6 +10,7 @@ typedef enum {
   TK_RESERVED,  // 記号
   TK_RETURN,    // return
   TK_IF,        // if
+  TK_ELSE,      // else
   TK_IDENT,     // 識別子
   TK_NUM,       // 整数トークン
   TK_EOF,       // 入力の終わりを表すトークン
@@ -73,6 +74,7 @@ struct Node {
   NodeKind kind;  // ノードの型
   Node *lhs;      // 左辺
   Node *rhs;      // 右辺
+  Node *els;      // else kindがND_IFの場合のみ使う
   int val;        // kindがND_NUMの場合のみ使う
   int offset;     // kindがND_LVARの場合のみ使う
 };
@@ -100,3 +102,4 @@ void gen_lval(Node *node);
 void gen(Node *node);
 
 extern int label_if;
+extern int label_else;

@@ -52,6 +52,8 @@ Node *stmt() {
     node->lhs = expr();
     expect(")");
     node->rhs = stmt();
+    if (consume("else")) node->els = stmt();  // else句がくる場合のみelsを持つ
+
     return node;
   }
 
