@@ -44,6 +44,7 @@ assert 10 "if(0 < 1) return 10; return 5;"
 assert 253 "if(1 == 1) return 253; return 0;"
 assert 5 "if (1 == 0) return 0; else return 5;"
 assert 10 "if (5 > 10) return 1; else if(9 > 10) return 2; else return 10;"
+assert 90 "a = 90; if (0) 0; return a;"
 assert 5 "a = 0; while(a < 5) a=a+1; return a;"
 assert 1 "a = 1; while(0) 0; return a;"
 
