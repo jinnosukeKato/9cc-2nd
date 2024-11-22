@@ -150,6 +150,13 @@ Token *tokenize() {
       continue;
     }
 
+    // while
+    if (strncmp(p, "while", 5) == 0 && !isalnum(p[5])) {
+      cur = new_token(TK_WHILE, cur, p, 5);
+      p += 5;
+      continue;
+    }
+
     // 変数
     if (isalpha(*p)) {
       char *q = p++;

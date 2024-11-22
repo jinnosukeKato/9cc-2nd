@@ -41,10 +41,13 @@ void program() {
 /*
   stmt := expr ";"
        | "if" "(" expr ")" stmt ("else" stmt)?
+       | "while" "(" expr ")" stmt
        | "return" expr ";"
 */
 Node *stmt() {
   Node *node;
+
+  // if
   if (consume_token(TK_IF)) {
     node = calloc(1, sizeof(Node));
     node->kind = ND_IF;
@@ -58,6 +61,18 @@ Node *stmt() {
     return node;
   }
 
+  // while
+  if (consume_token(TK_WHILE)) {
+    node = calloc(1, sizeof(Node));
+    node->kind = ND_WHILE;
+    expect("(");
+    node->lhs = expr();
+    expect(")");
+    node->rhs = stmt();
+    return node;
+  }
+
+  // return
   if (consume_token(TK_RETURN)) {
     node = calloc(1, sizeof(Node));
     node->kind = ND_RETURN;

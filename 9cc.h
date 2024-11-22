@@ -11,6 +11,7 @@ typedef enum {
   TK_RETURN,    // return
   TK_IF,        // if
   TK_ELSE,      // else
+  TK_WHILE,     // while
   TK_IDENT,     // 識別子
   TK_NUM,       // 整数トークン
   TK_EOF,       // 入力の終わりを表すトークン
@@ -55,6 +56,7 @@ extern LVar *locals;
 typedef enum {
   ND_RETURN,  // return
   ND_IF,      // if
+  ND_WHILE,
   ND_ADD,     // +
   ND_SUB,     // -
   ND_MUL,     // *
@@ -104,3 +106,4 @@ void gen(Node *node);
 
 extern int label_if;
 extern int label_else;
+extern int label_while;

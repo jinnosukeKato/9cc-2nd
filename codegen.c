@@ -12,6 +12,7 @@ void gen_lval(Node *node) {
 
 int label_if;
 int label_else;
+int label_while;
 
 void gen(Node *node) {
   switch (node->kind) {
@@ -54,6 +55,18 @@ void gen(Node *node) {
       }
       printf(".Lend%d:\n", label_if++);
       return;
+
+    case ND_WHILE:
+      printf(".Lbegin%d:\n", label_while);
+      gen(node->lhs);  // expr
+      printf("  pop rax\n");
+      printf("  cmp rax, 0\n");               // 条件式が偽か判定
+      printf("  je .Lend%d\n", label_while);  // 偽なら終わりにjump
+      gen(node->rhs);
+      printf("  jmp .Lbegin%d\n", label_while);  // 頭に戻る
+      printf(".Lend%d:\n", label_while++);
+      return;
+
     case ND_RETURN:
       gen(node->lhs);
       printf("  pop rax\n");  // スタックトップ(式の結果があるはず)からraxにpop
