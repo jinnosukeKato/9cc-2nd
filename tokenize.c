@@ -157,6 +157,13 @@ Token *tokenize() {
       continue;
     }
 
+    // for
+    if (strncmp(p, "for", 3) == 0 && !isalnum(p[3])) {
+      cur = new_token(TK_FOR, cur, p, 3);
+      p += 3;
+      continue;
+    }
+
     // 変数
     if (isalpha(*p)) {
       char *q = p++;

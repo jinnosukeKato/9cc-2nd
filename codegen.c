@@ -13,6 +13,7 @@ void gen_lval(Node *node) {
 int label_if;
 int label_else;
 int label_while;
+int label_for;
 
 void gen(Node *node) {
   switch (node->kind) {
@@ -71,6 +72,22 @@ void gen(Node *node) {
       gen(node->rhs);
       printf("  jmp .Lbegin%d\n", label_while);  // 頭に戻る
       printf(".Lend%d:\n", label_while++);
+      return;
+
+    case ND_FOR:
+      // for文の中が一度も実行されなかったときのために前のlineの評価結果をpushする
+      // printf("  push rax\n");
+
+      if (node->init) gen(node->init);  // 初期化式
+      printf(".Lbegin%d:\n", label_for);
+      if (node->cond) gen(node->cond);  // 継続条件式
+      printf("  pop rax\n");
+      printf("  cmp rax, 0\n");             // 継続条件が偽か
+      printf("  je .Lend%d\n", label_for);  // 継続条件が偽ならendにjump
+      gen(node->stmt);                      // forの中身
+      if (node->inc) gen(node->inc);  // インクリメント式?(名前わからん)
+      printf("  jmp .Lbegin%d\n", label_for);  // 最初に飛ぶ
+      printf(".Lend%d:\n", label_for++);
       return;
 
     case ND_RETURN:

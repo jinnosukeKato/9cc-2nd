@@ -31,6 +31,7 @@ int main(int argc, char **argv) {
   label_if = 0;    // ifのラベル
   label_else = 0;  // elseのラベル
   label_while = 0;
+  label_for = 0;
   for (int i = 0; code[i]; i++) {
     gen(code[i]);
 

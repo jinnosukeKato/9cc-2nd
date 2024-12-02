@@ -12,6 +12,7 @@ typedef enum {
   TK_IF,        // if
   TK_ELSE,      // else
   TK_WHILE,     // while
+  TK_FOR,       // for
   TK_IDENT,     // 識別子
   TK_NUM,       // 整数トークン
   TK_EOF,       // 入力の終わりを表すトークン
@@ -56,7 +57,8 @@ extern LVar *locals;
 typedef enum {
   ND_RETURN,  // return
   ND_IF,      // if
-  ND_WHILE,
+  ND_WHILE,   // while
+  ND_FOR,     // for
   ND_ADD,     // +
   ND_SUB,     // -
   ND_MUL,     // *
@@ -78,6 +80,10 @@ struct Node {
   Node *lhs;      // 左辺
   Node *rhs;      // 右辺
   Node *els;      // else kindがND_IFの場合のみ使う
+  Node *init;     // for用
+  Node *cond;     // for, while用
+  Node *inc;      // for用
+  Node *stmt;     // for, while用
   int val;        // kindがND_NUMの場合のみ使う
   int offset;     // kindがND_LVARの場合のみ使う
 };
@@ -107,3 +113,4 @@ void gen(Node *node);
 extern int label_if;
 extern int label_else;
 extern int label_while;
+extern int label_for;

@@ -47,5 +47,7 @@ assert 10 "if (5 > 10) return 1; else if(9 > 10) return 2; else return 10;"
 assert 90 "a = 90; if (0) 0; return a;"
 assert 5 "a = 0; while(a < 5) a=a+1; return a;"
 assert 1 "a = 1; while(0) 0; return a;"
+assert 10 "foo = 0; for(i = 0; i <= 10; i = i + 1) foo = i; return foo;"
+assert 5 "for(i = 10;; i = i-1) if(i == 5) return i;"
 
 echo OK
