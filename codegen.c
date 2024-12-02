@@ -23,9 +23,9 @@ void gen(Node *node) {
           expr;
         ↓
         if (stmt == 0)
-          goto end;
+          goto fi;
         expr;
-        end:(ここに飛ぶ)
+        fi:(ここに飛ぶ)
 
         if (stmt)
           expr;
@@ -35,10 +35,10 @@ void gen(Node *node) {
         if (stmt == 0)
           goto els;
         expr;
-        goto end;
+        goto fi;
         els:
           expr_els;
-        end:
+        fi:
       */
 
       // if文の中が一度も実行されなかったときのために前のlineの評価結果をpushする
@@ -50,28 +50,28 @@ void gen(Node *node) {
         // else節を持つ場合
         printf("  je .Lelse%d\n", label_else);  // .LelseXXXに偽ならjump
         gen(node->rhs);
-        printf("  jmp .Lend%d\n", label_if);
+        printf("  jmp .Lfi%d\n", label_if);
         printf(".Lelse%d:\n", label_else++);
         gen(node->els);
       } else {
-        printf("  je .Lend%d\n", label_if);  // .LendXXXに偽(ZF=0)ならjump
+        printf("  je .Lfi%d\n", label_if);  // .LendXXXに偽(ZF=0)ならjump
         gen(node->rhs);
       }
-      printf(".Lend%d:\n", label_if++);
+      printf(".Lfi%d:\n", label_if++);
       return;
 
     case ND_WHILE:
       // while文の中が一度も実行されなかったときのために前のlineの評価結果をpushする
       printf("  push rax\n");
 
-      printf(".Lbegin%d:\n", label_while);
+      printf(".Lwhl_begin%d:\n", label_while);
       gen(node->lhs);  // expr
       printf("  pop rax\n");
-      printf("  cmp rax, 0\n");               // 条件式が偽か判定
-      printf("  je .Lend%d\n", label_while);  // 偽なら終わりにjump
+      printf("  cmp rax, 0\n");                   // 条件式が偽か判定
+      printf("  je .Lwhl_end%d\n", label_while);  // 偽なら終わりにjump
       gen(node->rhs);
-      printf("  jmp .Lbegin%d\n", label_while);  // 頭に戻る
-      printf(".Lend%d:\n", label_while++);
+      printf("  jmp .Lwhl_begin%d\n", label_while);  // 頭に戻る
+      printf(".Lwhl_end%d:\n", label_while++);
       return;
 
     case ND_FOR:
@@ -79,15 +79,15 @@ void gen(Node *node) {
       // printf("  push rax\n");
 
       if (node->init) gen(node->init);  // 初期化式
-      printf(".Lbegin%d:\n", label_for);
+      printf(".Lfor_begin%d:\n", label_for);
       if (node->cond) gen(node->cond);  // 継続条件式
       printf("  pop rax\n");
-      printf("  cmp rax, 0\n");             // 継続条件が偽か
-      printf("  je .Lend%d\n", label_for);  // 継続条件が偽ならendにjump
-      gen(node->stmt);                      // forの中身
+      printf("  cmp rax, 0\n");                 // 継続条件が偽か
+      printf("  je .Lfor_end%d\n", label_for);  // 継続条件が偽ならendにjump
+      gen(node->stmt);                          // forの中身
       if (node->inc) gen(node->inc);  // インクリメント式?(名前わからん)
-      printf("  jmp .Lbegin%d\n", label_for);  // 最初に飛ぶ
-      printf(".Lend%d:\n", label_for++);
+      printf("  jmp .Lfor_begin%d\n", label_for);  // 最初に飛ぶ
+      printf(".Lfor_end%d:\n", label_for++);
       return;
 
     case ND_RETURN:
