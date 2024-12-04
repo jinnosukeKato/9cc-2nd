@@ -40,12 +40,29 @@ void program() {
 
 /*
   stmt := expr ";"
+       | "{" stmt* "}"
        | "if" "(" expr ")" stmt ("else" stmt)?
        | "while" "(" expr ")" stmt
        | "return" expr ";"
 */
 Node *stmt() {
   Node *node;
+
+  // ブロック {}
+  if (consume("{")) {
+    Node *head = calloc(1, sizeof(Node));
+    head->kind = ND_BLOCK;
+    head->next = NULL;
+    Node *cur = head;
+
+    while (!consume("}")) {
+      Node *tmp = stmt();
+      cur->next = tmp;
+      cur = tmp;
+    }
+
+    return head;
+  }
 
   // if
   if (consume_token(TK_IF)) {

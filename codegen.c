@@ -17,6 +17,15 @@ int label_for;
 
 void gen(Node *node) {
   switch (node->kind) {
+    case ND_BLOCK:
+      Node *stmt = node->next;
+      while (stmt) {
+        gen(stmt);
+        printf("  pop rax\n");
+        stmt = stmt->next;
+      }
+      return;
+
     case ND_IF:
       /*
         if (stmt)

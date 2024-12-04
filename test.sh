@@ -50,5 +50,8 @@ assert 1 "a = 1; while(0) 0; return a;"
 assert 10 "foo = 0; for(i = 0; i <= 10; i = i + 1) foo = i; return foo;"
 assert 5 "for(i = 10;; i = i-1) if(i == 5) return i;"
 assert 0 "for(i = 10; i != 10; i = 10) return 1; return 0;"
+assert 10 "a = 0; if(a == 0) {a = 5; a = a + 5;} return a;"
+assert 55 "a = 0; for(i = 1;; i = i + 1) { a = a+i; if(i >= 10) {return a;}}"
+assert 16 "i = 2; while(1){ if(i >= 16){ return i; } i = i + 1;} return 999;"
 
 echo OK

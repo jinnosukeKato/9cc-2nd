@@ -55,6 +55,7 @@ extern LVar *locals;
 
 // 抽象構文木のノードの種類
 typedef enum {
+  ND_BLOCK,   // block
   ND_RETURN,  // return
   ND_IF,      // if
   ND_WHILE,   // while
@@ -78,6 +79,8 @@ typedef struct Node Node;
 struct Node {
   NodeKind kind;  // ノードの種類
 
+  Node *next;  // ブロックの次の行
+
   Node *lhs;  // 2項演算の左辺
   Node *rhs;  // 2項演算の右辺
 
@@ -86,7 +89,7 @@ struct Node {
   Node *init;  // for文のinitialize文
   Node *cond;  // for, while文の条件式
   Node *inc;   // for文の変化式
-  Node *stmt;  // for, while文の本文
+  Node *stmt;  // for, while文，blockの本文
 
   int val;  // 数字の数
 
