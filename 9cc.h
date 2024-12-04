@@ -76,16 +76,21 @@ typedef struct Node Node;
 
 // 抽象構文木のノードの型
 struct Node {
-  NodeKind kind;  // ノードの型
-  Node *lhs;      // 左辺
-  Node *rhs;      // 右辺
-  Node *els;      // else kindがND_IFの場合のみ使う
-  Node *init;     // for用
-  Node *cond;     // for, while用
-  Node *inc;      // for用
-  Node *stmt;     // for, while用
-  int val;        // kindがND_NUMの場合のみ使う
-  int offset;     // kindがND_LVARの場合のみ使う
+  NodeKind kind;  // ノードの種類
+
+  Node *lhs;  // 2項演算の左辺
+  Node *rhs;  // 2項演算の右辺
+
+  Node *els;  // if-else文のelse
+
+  Node *init;  // for文のinitialize文
+  Node *cond;  // for, while文の条件式
+  Node *inc;   // for文の変化式
+  Node *stmt;  // for, while文の本文
+
+  int val;  // 数字の数
+
+  int offset;  // ローカル変数のオフセット
 };
 
 extern Token *token;
