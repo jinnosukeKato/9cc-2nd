@@ -21,9 +21,15 @@ void gen(Node *node) {
       Node *stmt = node->next;
       while (stmt) {
         gen(stmt);
-        printf("  pop rax\n");
+        // printf("  pop rax\n");
         stmt = stmt->next;
       }
+      return;
+
+    case ND_FUNCCALL:
+      printf("  call %.*s\n", locals[(locals->offset - node->offset) / 8].len,
+             locals[(locals->offset - node->offset) / 8].name);
+      printf("  push rax\n");
       return;
 
     case ND_IF:

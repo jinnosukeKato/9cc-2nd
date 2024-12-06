@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
   token = tokenize();
 
   // ローカルのメモリ領域を確保
-  locals = calloc(1, sizeof(LVar));
+  locals = calloc(1, sizeof(LIdent));
   // パース
   program();
 

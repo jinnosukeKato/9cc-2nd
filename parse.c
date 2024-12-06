@@ -3,8 +3,8 @@
 // プログラムを格納する配列
 Node *code[100];
 
-// ローカル変数
-LVar *locals;
+// ローカル識別子
+LIdent *locals;
 
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs) {
   Node *node = calloc(1, sizeof(Node));
@@ -22,10 +22,10 @@ Node *new_node_num(int val) {
 }
 
 // 変数を名前でlocalsから検索する．なければNULLを返す．
-LVar *find_lvar(Token *tok) {
-  for (LVar *var = locals; var; var = var->next)
-    if (var->len == tok->len && !memcmp(tok->str, var->name, var->len))
-      return var;
+LIdent *find_ident(Token *tok) {
+  for (LIdent *ident = locals; ident; ident = ident->next)
+    if (ident->len == tok->len && !memcmp(tok->str, ident->name, ident->len))
+      return ident;
 
   return NULL;
 }
@@ -205,7 +205,11 @@ Node *unary() {
   return primary();
 }
 
-// primary := num | "(" add ")"
+/*
+  primary := num
+           | ident ("(" ")")? 変数または関数呼び出し
+           | "(" add ")"
+*/
 Node *primary() {
   // 次のトークンが"("であるならば"(" add ")"のはず
   if (consume("(")) {
@@ -220,18 +224,23 @@ Node *primary() {
     Node *node = calloc(1, sizeof(Node));
     node->kind = ND_LVAR;
 
-    LVar *lvar = find_lvar(tok);
-    if (lvar) {
-      node->offset = lvar->offset;
+    LIdent *ident = find_ident(tok);
+    if (ident) {
+      node->offset = ident->offset;
     } else {
-      lvar = calloc(1, sizeof(LVar));
-      lvar->next = locals;
-      lvar->name = tok->str;
-      lvar->len = tok->len;
-      lvar->offset = locals->offset + 8;
-      node->offset = lvar->offset;
-      locals = lvar;
+      ident = calloc(1, sizeof(LIdent));
+      ident->next = locals;
+      ident->name = tok->str;
+      ident->len = tok->len;
+      ident->offset = locals->offset + 8;
+      node->offset = ident->offset;
+      locals = ident;
     }
+    if (consume("(")) {
+      node->kind = ND_FUNCCALL;
+      expect(")");
+    }
+
     return node;
   }
 

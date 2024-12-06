@@ -5,7 +5,7 @@ assert() {
   input="$2";
 
   ./9cc "$input" > tmp.s
-  cc -o tmp tmp.s
+  cc -o tmp tmp.s callee.o
   ./tmp
   actual="$?"
 
@@ -53,5 +53,7 @@ assert 0 "for(i = 10; i != 10; i = 10) return 1; return 0;"
 assert 10 "a = 0; if(a == 0) {a = 5; a = a + 5;} return a;"
 assert 55 "a = 0; for(i = 1;; i = i + 1) { a = a+i; if(i >= 10) {return a;}}"
 assert 16 "i = 2; while(1){ if(i >= 16){ return i; } i = i + 1;} return 999;"
+assert 5 "foo();"
+assert 0 "print();"
 
 echo OK

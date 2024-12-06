@@ -41,36 +41,37 @@ Token *new_token(TokenKind kind, Token *cur, char *str, int len);
 Token *tokenize();
 
 // parse.c
-// ローカル変数の型
-typedef struct LVar LVar;
+// ローカル識別子の型
+typedef struct LIdent LIdent;
 
-struct LVar {
-  LVar *next;  // 次のローカル変数かNULL
-  char *name;  // 変数名
-  int len;     // 変数名の長さ
-  int offset;  // RBPからのオフセット
+struct LIdent {
+  LIdent *next;  // 次のローカル識別子かNULL
+  char *name;    // 識別子
+  int len;       // 識別子の長さ
+  int offset;    // RBPからのオフセット
 };
 
-extern LVar *locals;
+extern LIdent *locals;
 
 // 抽象構文木のノードの種類
 typedef enum {
-  ND_BLOCK,   // block
-  ND_RETURN,  // return
-  ND_IF,      // if
-  ND_WHILE,   // while
-  ND_FOR,     // for
-  ND_ADD,     // +
-  ND_SUB,     // -
-  ND_MUL,     // *
-  ND_DIV,     // /
-  ND_EQ,      // ==
-  ND_NE,      // !=
-  ND_LT,      // < | >
-  ND_LE,      // <= | >=
-  ND_ASSIGN,  // =
-  ND_LVAR,    // ローカル変数
-  ND_NUM,     // 整数
+  ND_BLOCK,     // block
+  ND_FUNCCALL,  // 関数呼び出し
+  ND_RETURN,    // return
+  ND_IF,        // if
+  ND_WHILE,     // while
+  ND_FOR,       // for
+  ND_ADD,       // +
+  ND_SUB,       // -
+  ND_MUL,       // *
+  ND_DIV,       // /
+  ND_EQ,        // ==
+  ND_NE,        // !=
+  ND_LT,        // < | >
+  ND_LE,        // <= | >=
+  ND_ASSIGN,    // =
+  ND_LVAR,      // ローカル変数
+  ND_NUM,       // 整数
 } NodeKind;
 
 typedef struct Node Node;

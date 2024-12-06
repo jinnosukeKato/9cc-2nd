@@ -7,8 +7,14 @@ OBJS=$(SRCS:.c=.o)
 
 $(OBJS): 9cc.h
 
-test: 9cc
+callee:
+				$(CC) callee.c -c
+
+test: 9cc callee
 				./test.sh
+
+disasm:
+				objdump tmp -d -M intel > tmp_disassemble.s
 
 clean:
 				rm -f 9cc *.o *~ tmp*
