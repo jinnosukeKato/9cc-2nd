@@ -27,6 +27,9 @@ void gen(Node *node) {
       return;
 
     case ND_FUNCCALL:
+      if (locals->offset % 16 != 0)
+        printf("  sub rsp, 0x8\n");  // RSPを16の倍数にalignmentする
+
       printf("  call %.*s\n", locals[(locals->offset - node->offset) / 8].len,
              locals[(locals->offset - node->offset) / 8].name);
       printf("  push rax\n");
