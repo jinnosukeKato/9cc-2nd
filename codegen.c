@@ -93,9 +93,6 @@ void gen(Node *node) {
       return;
 
     case ND_FOR:
-      // for文の中が一度も実行されなかったときのために前のlineの評価結果をpushする
-      // printf("  push rax\n");
-
       if (node->init) gen(node->init);  // 初期化式
       printf(".Lfor_begin%d:\n", label_for);
       if (node->cond) gen(node->cond);  // 継続条件式
