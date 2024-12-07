@@ -116,9 +116,7 @@ void gen(Node *node) {
       printf("  pop rbp\n");
       printf("  ret\n");
       return;
-    case ND_NUM:
-      printf("  push %d\n", node->val);  // 数値なら値をpushするだけ
-      return;
+
     case ND_LVAR:
       gen_lval(node);
       /*
@@ -129,6 +127,7 @@ void gen(Node *node) {
       printf("  mov rax, [rax]\n");
       printf("  push rax\n");
       return;
+
     case ND_ASSIGN:
       gen_lval(node->lhs);  // 左辺のノードを計算(左辺は必ず変数)
       gen(node->rhs);       // 右辺のノードを計算
@@ -138,9 +137,13 @@ void gen(Node *node) {
       printf("  mov [rax], rdi\n");  // 変数のアドレスに右辺を代入
       printf("  push rdi\n");        // 右辺をpush
       return;
+
+    case ND_NUM:
+      printf("  push %d\n", node->val);  // 数値なら値をpushするだけ
+      return;
   }
 
-  // 左右辺を数値になるまで再帰
+  // 左右辺を終端記号になるまで再帰
   gen(node->lhs);
   gen(node->rhs);
 
