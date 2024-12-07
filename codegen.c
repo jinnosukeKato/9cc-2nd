@@ -61,9 +61,6 @@ void gen(Node *node) {
           expr_els;
         fi:
       */
-
-      // if文の中が一度も実行されなかったときのために前のlineの評価結果をpushする
-      printf("  push rax\n");
       gen(node->lhs);
       printf("  pop rax\n");     // lhs(評価式)の値を取る
       printf("  cmp rax, 0\n");  // 評価式==0(偽か)→結果はZFに
@@ -82,9 +79,6 @@ void gen(Node *node) {
       return;
 
     case ND_WHILE:
-      // while文の中が一度も実行されなかったときのために前のlineの評価結果をpushする
-      printf("  push rax\n");
-
       printf(".Lwhl_begin%d:\n", label_while);
       gen(node->lhs);  // expr
       printf("  pop rax\n");
