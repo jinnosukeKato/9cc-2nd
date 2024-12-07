@@ -207,7 +207,7 @@ Node *unary() {
 
 /*
   primary := num
-           | ident ("(" ")")? 変数または関数呼び出し
+           | ident ("(" (equality ",")? ")")? 変数または関数呼び出し
            | "(" add ")"
 */
 Node *primary() {
@@ -228,6 +228,7 @@ Node *primary() {
     if (ident) {
       node->offset = ident->offset;
     } else {
+      // その識別子が存在しなければ新しく作成する
       ident = calloc(1, sizeof(LIdent));
       ident->next = locals;
       ident->name = tok->str;
@@ -238,6 +239,11 @@ Node *primary() {
     }
     if (consume("(")) {
       node->kind = ND_FUNCCALL;
+      for (int i = 0; i < 6; i++) {
+        if (consume(")")) return node;
+        consume(",");  // カンマがあれば読み飛ばす
+        ident->arg[i] = equality();
+      }
       expect(")");
     }
 

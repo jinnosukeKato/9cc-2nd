@@ -55,5 +55,9 @@ assert 55 "a = 0; for(i = 1;; i = i + 1) { a = a+i; if(i >= 10) {return a;}}"
 assert 16 "i = 2; while(1){ if(i >= 16){ return i; } i = i + 1;} return 999;"
 assert 5 "foo();"
 assert 0 "print();"
+assert 77 "argument(77);"
+assert 30 "add2args(20, 10);"
+assert 21 "add6args(1, 2, 3, 4, 5, 6);"
+assert 20 "ten = 10; return add2args(ten, 10);"
 
 echo OK

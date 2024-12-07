@@ -33,6 +33,32 @@ void gen(Node *node) {
       if (locals->offset % 16 != 0)
         printf("  sub rsp, 0x8\n");  // RSPを16の倍数にalignmentする
 
+      // 引数の評価
+      if (locals->arg[0]) {
+        gen(locals->arg[0]);
+        printf("  pop rdi\n");
+      }
+      if (locals->arg[1]) {
+        gen(locals->arg[1]);
+        printf("  pop rsi\n");
+      }
+      if (locals->arg[2]) {
+        gen(locals->arg[2]);
+        printf("  pop rdx\n");
+      }
+      if (locals->arg[3]) {
+        gen(locals->arg[3]);
+        printf("  pop rcx\n");
+      }
+      if (locals->arg[4]) {
+        gen(locals->arg[4]);
+        printf("  pop r8\n");
+      }
+      if (locals->arg[5]) {
+        gen(locals->arg[5]);
+        printf("  pop r9\n");
+      }
+
       printf("  call %.*s\n", locals[(locals->offset - node->offset) / 8].len,
              locals[(locals->offset - node->offset) / 8].name);
       printf("  push rax\n");

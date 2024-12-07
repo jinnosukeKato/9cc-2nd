@@ -41,18 +41,6 @@ Token *new_token(TokenKind kind, Token *cur, char *str, int len);
 Token *tokenize();
 
 // parse.c
-// ローカル識別子の型
-typedef struct LIdent LIdent;
-
-struct LIdent {
-  LIdent *next;  // 次のローカル識別子かNULL
-  char *name;    // 識別子
-  int len;       // 識別子の長さ
-  int offset;    // RBPからのオフセット
-};
-
-extern LIdent *locals;
-
 // 抽象構文木のノードの種類
 typedef enum {
   ND_BLOCK,     // block
@@ -96,6 +84,20 @@ struct Node {
 
   int offset;  // ローカル変数のオフセット
 };
+
+// ローカル識別子の型
+typedef struct LIdent LIdent;
+
+struct LIdent {
+  LIdent *next;  // 次のローカル識別子かNULL
+  char *name;    // 識別子
+  int len;       // 識別子の長さ
+  int offset;    // RBPからのオフセット
+
+  Node *arg[6];  // 引数
+};
+
+extern LIdent *locals;
 
 extern Token *token;
 extern char *user_input;

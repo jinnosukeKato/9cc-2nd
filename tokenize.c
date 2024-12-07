@@ -122,7 +122,7 @@ Token *tokenize() {
     }
 
     // 1文字の演算子
-    if (strchr("+-*/()<>;={}", *p)) {
+    if (strchr("+-*/()<>;={},", *p)) {
       // 現在の文字ポインタpをnew_tokenに渡してからインクリメントしている
       cur = new_token(TK_RESERVED, cur, p, 1);
       p += 1;
