@@ -23,6 +23,7 @@ int main(int argc, char **argv) {
 
   // プロローグ
   // ローカル変数の領域を確保する
+  printf("  #prologue\n");
   printf("  push rbp\n");
   printf("  mov rbp, rsp\n");
   printf("  sub rsp, %d\n", locals->offset);
@@ -33,6 +34,7 @@ int main(int argc, char **argv) {
   label_while = 0;
   label_for = 0;
   for (int i = 0; code[i]; i++) {
+    printf("\n  #statement %d\n", i);
     gen(code[i]);
 
     /*

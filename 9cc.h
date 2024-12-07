@@ -116,6 +116,7 @@ Node *primary();
 Node *unary();
 
 // codegen.c
+void gen_comment(Node *node);
 void gen_lval(Node *node);
 void gen(Node *node);
 

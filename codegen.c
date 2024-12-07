@@ -1,5 +1,7 @@
 #include "9cc.h"
 
+void gen_comment(Node *node) { printf("  #%d\n", node->kind); }
+
 void gen_lval(Node *node) {
   if (node->kind != ND_LVAR)
     error_at(token->str, "代入の左辺値が変数ではありません");
@@ -16,6 +18,7 @@ int label_while;
 int label_for;
 
 void gen(Node *node) {
+  gen_comment(node);
   switch (node->kind) {
     case ND_BLOCK:
       Node *stmt = node->next;
