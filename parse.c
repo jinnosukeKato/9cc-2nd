@@ -21,13 +21,13 @@ Node *new_node_num(int val) {
   return node;
 }
 
-// 変数を名前でlocalsから検索する．なければNULLを返す．
+// 変数を名前でlocalsから検索する．なければエラーを出しNULlを返す．
 LIdent *find_ident(Token *tok) {
   for (LIdent *ident = locals; ident; ident = ident->next)
     if (ident->len == tok->len && !memcmp(tok->str, ident->name, ident->len))
       return ident;
 
-  return NULL;
+  error("宣言されていない識別子が使用されています");
 }
 
 // program := stmt*
@@ -199,6 +199,7 @@ Node *mul() {
 /*
 unary := "+"? primary
        | "-"? primary
+       | "int" ident equality
        | "&" unary
        | "*" unary
 */
@@ -216,7 +217,7 @@ Node *unary() {
 
 /*
   primary := num
-           | ident ("(" (equality ",")? ")")? 変数または関数呼び出し
+           | "int"? ident ("(" (equality ",")? ")")? 変数または関数呼び出し
            | "(" add ")"
 */
 Node *primary() {
@@ -227,25 +228,30 @@ Node *primary() {
     return node;
   }
 
-  // 識別子の場合
+  Node *node = calloc(1, sizeof(Node));
+  LIdent *ident = calloc(1, sizeof(LIdent));
   Token *tok = consume_ident();
-  if (tok) {
-    Node *node = calloc(1, sizeof(Node));
-    node->kind = ND_LVAR;
 
-    LIdent *ident = find_ident(tok);
+  if (consume("int")) {
+    // 識別子の宣言の場合
+    node->kind = ND_LVAR;
+    Token *tok = consume_ident();
+    ident->next = locals;
+    ident->name = tok->str;
+    ident->len = tok->len;
+    ident->offset = locals->offset + 8;
+    node->offset = ident->offset;
+    locals = ident;
+  } else if (tok) {
+    // 宣言済の識別子の場合
+    node->kind = ND_LVAR;
+    ident = find_ident(tok);
     if (ident) {
       node->offset = ident->offset;
-    } else {
-      // その識別子が存在しなければ新しく作成する
-      ident = calloc(1, sizeof(LIdent));
-      ident->next = locals;
-      ident->name = tok->str;
-      ident->len = tok->len;
-      ident->offset = locals->offset + 8;
-      node->offset = ident->offset;
-      locals = ident;
     }
+  }
+
+  if (node->kind == ND_LVAR) {
     if (consume("(")) {
       node->kind = ND_FUNCCALL;
       for (int i = 0; i < 6; i++) {
