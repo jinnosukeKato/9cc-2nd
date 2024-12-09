@@ -45,6 +45,7 @@ Token *tokenize();
 // 抽象構文木のノードの種類
 typedef enum {
   ND_BLOCK,     // block
+  ND_FUNK,      // 関数定義
   ND_FUNCCALL,  // 関数呼び出し
   ND_RETURN,    // return
   ND_IF,        // if
@@ -109,7 +110,8 @@ extern Node *code[100];
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 
-void program();
+void parse();
+Node *program();
 Node *stmt();
 Node *expr();
 Node *assign();

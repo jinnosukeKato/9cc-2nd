@@ -19,6 +19,27 @@ int label_for;
 void gen(Node *node) {
   gen_comment(node);
   switch (node->kind) {
+    case ND_FUNK:
+      expect("int");
+      Token *tok = consume_ident();
+      printf("%*.s:\n", tok->str, tok->len);
+
+      // プロローグ
+      // ローカル変数の領域を確保する
+      printf("  #prologue\n");
+      printf("  push rbp\n");
+      printf("  mov rbp, rsp\n");
+      printf("  sub rsp, %d\n", locals->offset);
+
+      gen(node->stmt);
+
+      // エピローグ
+      // 式の評価結果として最終的にスタックに1つの値が残っているのでそれを返り値にする
+      printf("  pop rax\n");
+      printf("  mov rsp, rbp\n");
+      printf("  pop rbp\n");
+      printf("  ret\n");
+      return;
     case ND_BLOCK:
       Node *stmt = node->next;
       while (stmt) {
