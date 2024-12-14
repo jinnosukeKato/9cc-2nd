@@ -30,9 +30,11 @@ struct Token {
 };
 
 void error_at(char *loc, char *fmt, ...);
+void error(char *fmt, ...);
 bool consume(char *op);
 bool consume_token(TokenKind tok);
 Token *consume_ident();
+Token *expect_ident();
 void expect(char *op);
 int expect_number();
 bool at_eof();
@@ -43,6 +45,7 @@ Token *tokenize();
 // parse.c
 // 抽象構文木のノードの種類
 typedef enum {
+  ND_FUNCTION,  // 関数
   ND_BLOCK,     // block
   ND_FUNCCALL,  // 関数呼び出し
   ND_RETURN,    // return
@@ -64,6 +67,9 @@ typedef enum {
 
 typedef struct Node Node;
 
+// ローカル識別子の型
+typedef struct LIdent LIdent;
+
 // 抽象構文木のノードの型
 struct Node {
   NodeKind kind;  // ノードの種類
@@ -83,10 +89,9 @@ struct Node {
   int val;  // 数字の数
 
   int offset;  // ローカル変数のオフセット
-};
 
-// ローカル識別子の型
-typedef struct LIdent LIdent;
+  LIdent *ident;  // 関数
+};
 
 struct LIdent {
   LIdent *next;  // 次のローカル識別子かNULL
@@ -107,6 +112,7 @@ Node *new_node(NodeKind kind, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 
 void program();
+Node *function();
 Node *stmt();
 Node *expr();
 Node *assign();

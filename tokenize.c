@@ -22,6 +22,17 @@ void error_at(char *loc, char *fmt, ...) {
   exit(1);
 }
 
+void error(char *fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+
+  fprintf(stderr, "%s\n", user_input);
+
+  vfprintf(stderr, fmt, ap);
+  fprintf(stderr, "\n");
+  exit(1);
+}
+
 /*
 次のトークンが期待しているトークンの時には，トークンを1つ読み進めて
 真を返す．それ以外の場合には偽を返す．
@@ -58,6 +69,17 @@ Token *consume_ident() {
   Token *t = token;
   token = token->next;
   return t;
+}
+
+/*
+次のトークンが識別子の場合にトークンを1つ読み進めてそのトークンを返す．
+識別子でない場合はエラーを吐く．
+*/
+Token *expect_ident() {
+  Token *tok = consume_ident();
+  if (!tok) error("識別子がありません");
+
+  return tok;
 }
 
 /*

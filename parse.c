@@ -30,12 +30,46 @@ LIdent *find_ident(Token *tok) {
   return NULL;
 }
 
-// program := stmt*
+// program := function*
 void program() {
   int i = 0;
-  while (!at_eof()) code[i++] = stmt();
+  while (!at_eof()) code[i++] = function();
 
   code[i] = NULL;
+}
+
+// function := ident "(" ident? ")" stmt*
+Node *function() {
+  Node *node = calloc(1, sizeof(Node));
+  node->kind = ND_FUNCTION;
+
+  Token *func_ident = expect_ident();
+  expect("(");
+
+  // その識別子があるか**全体から**探す∵ここでの関数定義はグローバルなものなので...
+  LIdent *ident = find_ident(func_ident);
+  if (ident) {
+    node->offset = ident->offset;
+  } else {
+    // その識別子が存在しなければ新しく作成する
+    ident = calloc(1, sizeof(LIdent));
+    ident->next = locals;
+    ident->name = func_ident->str;
+    ident->len = func_ident->len;
+    ident->offset = locals->offset + 8;
+    node->offset = ident->offset;
+    locals = ident;
+  }
+  node->ident = ident;
+
+  for (int i = 0; i < 6; i++) {
+    if (consume(")")) break;
+    consume(",");       // カンマがあれば読み飛ばす
+    node->offset += 8;  // 引数1つごとに1byteオフセットを作る
+  }
+
+  node->stmt = stmt();
+  return node;
 }
 
 /*
