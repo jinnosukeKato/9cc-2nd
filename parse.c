@@ -21,6 +21,14 @@ Node *new_node_num(int val) {
   return node;
 }
 
+LIdent *new_ident(Token *tok) {
+  LIdent *ident = calloc(1, sizeof(LIdent));
+  ident->next = locals;
+  ident->name = tok->str;
+  ident->len = tok->len;
+  ident->offset = locals->offset + 8;
+}
+
 // 変数を名前でlocalsから検索する．なければNULLを返す．
 LIdent *find_ident(Token *tok) {
   for (LIdent *ident = locals; ident; ident = ident->next)
@@ -229,11 +237,7 @@ Node *primary() {
       node->offset = ident->offset;
     } else {
       // その識別子が存在しなければ新しく作成する
-      ident = calloc(1, sizeof(LIdent));
-      ident->next = locals;
-      ident->name = tok->str;
-      ident->len = tok->len;
-      ident->offset = locals->offset + 8;
+      ident = new_ident(tok);
       node->offset = ident->offset;
       locals = ident;
     }
