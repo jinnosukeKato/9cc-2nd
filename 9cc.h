@@ -29,6 +29,7 @@ struct Token {
   int len;         // トークンの長さ
 };
 
+void error(char *fmt, ...);
 void error_at(char *loc, char *fmt, ...);
 bool consume(char *op);
 bool consume_token(TokenKind tok);
@@ -43,6 +44,7 @@ Token *tokenize();
 // parse.c
 // 抽象構文木のノードの種類
 typedef enum {
+  ND_FUNCTION,  // 関数
   ND_BLOCK,     // block
   ND_FUNCCALL,  // 関数呼び出し
   ND_RETURN,    // return
@@ -83,6 +85,9 @@ struct Node {
   int val;  // 数字の数
 
   int offset;  // ローカル変数のオフセット
+
+  char *name;  // 識別子の行データ
+  int len;     // 識別子の長さ
 };
 
 // ローカル識別子の型
