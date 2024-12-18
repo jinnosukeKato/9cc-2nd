@@ -6,6 +6,17 @@ Token *token;
 // 入力プログラム
 char *user_input;
 
+// エラーを報告
+void error(char *fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+
+  fprintf(stderr, "%s\n", user_input);
+  vfprintf(stderr, fmt, ap);
+  fprintf(stderr, "\n");
+  exit(1);
+}
+
 // エラー箇所を報告
 void error_at(char *loc, char *fmt, ...) {
   va_list ap;
