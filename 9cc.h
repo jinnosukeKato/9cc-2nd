@@ -88,6 +88,8 @@ struct Node {
 
   char *name;  // 識別子の行データ
   int len;     // 識別子の長さ
+
+  Node *arg[6];  // 引数
 };
 
 // ローカル識別子の型
@@ -98,8 +100,6 @@ struct LIdent {
   char *name;    // 識別子
   int len;       // 識別子の長さ
   int offset;    // RBPからのオフセット
-
-  Node *arg[6];  // 引数
 };
 
 extern LIdent *locals;

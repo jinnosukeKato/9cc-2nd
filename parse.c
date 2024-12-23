@@ -265,13 +265,15 @@ Node *primary() {
     }
 
     node->offset = ident->offset;
+    node->name = ident->name;
+    node->len = ident->len;
 
     if (consume("(")) {
       node->kind = ND_FUNCCALL;
       for (int i = 0; i < 6; i++) {
         if (consume(")")) return node;
         consume(",");  // カンマがあれば読み飛ばす
-        ident->arg[i] = equality();
+        node->arg[i] = equality();
       }
       expect(")");
     }
