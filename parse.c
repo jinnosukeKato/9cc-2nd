@@ -48,7 +48,7 @@ void program() {
 }
 
 /*
-  function := ident "(" ")" stmt
+  function := ident "(" (" (equality ",")? " ")" stmt
 */
 Node *function() {
   Node *node = calloc(1, sizeof(Node));
@@ -58,15 +58,25 @@ Node *function() {
 
   LIdent *ident = find_ident(tok);
   if (!ident) {
-    ident = new_ident(tok);
+    ident = calloc(1, sizeof(LIdent));
+    ident->next = locals;
+    ident->name = tok->str;
+    ident->len = tok->len;
+    ident->offset = locals->offset;  // ローカル変数のためにオフセットを保存
+    locals = ident;
   }
 
-  node->offset = ident->offset;
   node->len = ident->len;
   node->name = ident->name;
 
   expect("(");
-  expect(")");
+  while (!consume(")")) {
+    consume_ident();
+    consume(",");  // カンマがあれば読み飛ばす
+    node->arg_len += 1;
+    // todo:
+    // ここはidentにarg_lenを持たせてそれをコピーするべき，かつ新規ident定義時にのみやるべき
+  }
 
   node->stmt = stmt();
   return node;
