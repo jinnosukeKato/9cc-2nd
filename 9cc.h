@@ -90,6 +90,7 @@ struct Node {
   int len;     // 識別子の長さ
 
   Node *arg[6];  // 引数
+  int arg_len;   // 関数における引数の個数
 };
 
 // ローカル識別子の型

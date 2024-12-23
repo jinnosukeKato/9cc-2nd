@@ -26,7 +26,26 @@ void gen(Node *node) {
       printf("  #prologue\n");
       printf("  push rbp\n");
       printf("  mov rbp, rsp\n");
-      printf("  sub rsp, %d\n", node->offset);
+      // printf("  sub rsp, %d\n", node->offset);
+      if (node->arg_len >= 1) {
+        printf("  push rdi\n");
+      }
+      if (node->arg_len >= 2) {
+        printf("  push rsi\n");
+      }
+      if (node->arg_len >= 3) {
+        printf("  push rdx\n");
+      }
+      if (node->arg_len >= 4) {
+        printf("  push rcx\n");
+      }
+      if (node->arg_len >= 5) {
+        printf("  push r8\n");
+      }
+      if (node->arg_len >= 6) {
+        printf("  push r9\n");
+      }
+      // 引数は当面6つまでとする
 
       gen(node->stmt);
 
@@ -41,8 +60,9 @@ void gen(Node *node) {
       Node *stmt = node->next;
       while (stmt) {
         gen(stmt);
-        printf("  pop rax\n");
         stmt = stmt->next;
+        if (!stmt) printf("  pop rax\n");
+        // stmtが1行で終わるブロックの場合にはpopする必要がない
       }
       return;
 
