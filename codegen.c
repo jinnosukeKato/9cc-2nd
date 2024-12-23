@@ -41,7 +41,7 @@ void gen(Node *node) {
       Node *stmt = node->next;
       while (stmt) {
         gen(stmt);
-        // printf("  pop rax\n");
+        printf("  pop rax\n");
         stmt = stmt->next;
       }
       return;
