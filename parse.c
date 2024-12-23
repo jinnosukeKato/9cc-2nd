@@ -27,6 +27,7 @@ LIdent *new_ident(Token *tok) {
   ident->name = tok->str;
   ident->len = tok->len;
   ident->offset = locals->offset + 8;
+  locals = ident;
 }
 
 // 変数を名前でlocalsから検索する．なければNULLを返す．
@@ -38,12 +39,37 @@ LIdent *find_ident(Token *tok) {
   return NULL;
 }
 
-// program := stmt*
+// program := function*
 void program() {
   int i = 0;
-  while (!at_eof()) code[i++] = stmt();
+  while (!at_eof()) code[i++] = function();
 
   code[i] = NULL;
+}
+
+/*
+  function := ident "(" ")" stmt
+*/
+Node *function() {
+  Node *node = calloc(1, sizeof(Node));
+  node->kind = ND_FUNCTION;
+  Token *tok = consume_ident();
+  if (!tok) error("識別子ではありません");
+
+  LIdent *ident = find_ident(tok);
+  if (!ident) {
+    ident = new_ident(tok);
+  }
+
+  node->offset = ident->offset;
+  node->len = ident->len;
+  node->name = ident->name;
+
+  expect("(");
+  expect(")");
+
+  node->stmt = stmt();
+  return node;
 }
 
 /*
@@ -233,14 +259,13 @@ Node *primary() {
     node->kind = ND_LVAR;
 
     LIdent *ident = find_ident(tok);
-    if (ident) {
-      node->offset = ident->offset;
-    } else {
+    if (!ident) {
       // その識別子が存在しなければ新しく作成する
       ident = new_ident(tok);
-      node->offset = ident->offset;
-      locals = ident;
     }
+
+    node->offset = ident->offset;
+
     if (consume("(")) {
       node->kind = ND_FUNCCALL;
       for (int i = 0; i < 6; i++) {

@@ -112,6 +112,7 @@ Node *new_node(NodeKind kind, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 
 void program();
+Node *function();
 Node *stmt();
 Node *expr();
 Node *assign();
