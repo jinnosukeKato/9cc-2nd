@@ -20,6 +20,23 @@ int label_for;
 void gen(Node *node) {
   gen_comment(node);
   switch (node->kind) {
+    case ND_FUNCTION:
+      // プロローグ
+      printf("%.*s:\n", node->len, node->name);
+      printf("  #prologue\n");
+      printf("  push rbp\n");
+      printf("  mov rbp, rsp\n");
+      printf("  sub rsp, %d\n", node->offset);
+
+      gen(node->stmt);
+
+      // エピローグ
+      // 式の評価結果として最終的にスタックに1つの値が残っているのでそれを返り値にする
+      printf("  pop rax\n");
+      printf("  mov rsp, rbp\n");
+      printf("  pop rbp\n");
+      printf("  ret\n");
+
     case ND_BLOCK:
       Node *stmt = node->next;
       while (stmt) {
@@ -30,6 +47,7 @@ void gen(Node *node) {
       return;
 
     case ND_FUNCCALL:
+      // todo: ここargをnodeに持たせなければならない
       if (locals->offset % 16 != 0)
         printf("  sub rsp, 0x8\n");  // RSPを16の倍数にalignmentする
 
