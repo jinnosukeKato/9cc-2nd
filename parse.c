@@ -127,7 +127,7 @@ Node *stmt() {
     node = calloc(1, sizeof(Node));
     node->kind = ND_WHILE;
     expect("(");
-    node->lhs = expr();
+    node->cond = expr();
     expect(")");
     node->rhs = stmt();
     return node;
