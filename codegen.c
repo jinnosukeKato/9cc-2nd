@@ -148,7 +148,7 @@ void gen(Node *node) {
       }
       printf("  cmp rax, 0\n");                   // 条件式が偽か判定
       printf("  je .Lwhl_end%d\n", label_while);  // 偽なら終わりにjump
-      gen(node->rhs);
+      gen(node->stmt);
       printf("  jmp .Lwhl_begin%d\n", label_while);  // 頭に戻る
       printf(".Lwhl_end%d:\n", label_while++);
       return;
