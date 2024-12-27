@@ -129,7 +129,7 @@ Node *stmt() {
     expect("(");
     node->cond = expr();
     expect(")");
-    node->rhs = stmt();
+    node->stmt = stmt();
     return node;
   }
 
