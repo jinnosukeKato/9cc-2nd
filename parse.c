@@ -21,15 +21,6 @@ Node *new_node_num(int val) {
   return node;
 }
 
-LIdent *new_ident(Token *tok) {
-  LIdent *ident = calloc(1, sizeof(LIdent));
-  ident->next = locals;
-  ident->name = tok->str;
-  ident->len = tok->len;
-  ident->offset = locals->offset + 8;
-  return ident;
-}
-
 // 変数を名前でlocalsから検索する．なければエラーを出しNULlを返す．
 LIdent *find_ident(Token *tok) {
   for (LIdent *ident = locals; ident; ident = ident->next)
@@ -39,27 +30,12 @@ LIdent *find_ident(Token *tok) {
   error("宣言されていない識別子が使用されています");
 }
 
-void parse() {
+// program := stmt*
+void program() {
   int i = 0;
-  while (!at_eof()) code[i++] = program();
+  while (!at_eof()) code[i++] = stmt();
 
   code[i] = NULL;
-}
-
-// program := ident stmt
-Node *program() {
-  Node *node = calloc(1, sizeof(Node));
-  node->kind = ND_FUNK;
-  consume("int");
-  LIdent *ident = new_ident(consume_ident());
-  expect("(");
-  for (int i = 0; i < 6; i++) {
-    if (consume(")")) break;
-    consume(",");  // カンマがあれば読み飛ばす
-    ident->arg[i] = equality();
-  }
-  node->stmt = stmt();
-  return node;
 }
 
 /*
@@ -253,14 +229,17 @@ Node *primary() {
   }
 
   Node *node = calloc(1, sizeof(Node));
-  LIdent *ident;
+  LIdent *ident = calloc(1, sizeof(LIdent));
   Token *tok = consume_ident();
 
   if (consume("int")) {
     // 識別子の宣言の場合
     node->kind = ND_LVAR;
     Token *tok = consume_ident();
-    ident = new_ident(tok);
+    ident->next = locals;
+    ident->name = tok->str;
+    ident->len = tok->len;
+    ident->offset = locals->offset + 8;
     node->offset = ident->offset;
     locals = ident;
   } else if (tok) {

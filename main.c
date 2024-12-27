@@ -14,11 +14,19 @@ int main(int argc, char **argv) {
   // ローカルのメモリ領域を確保
   locals = calloc(1, sizeof(LIdent));
   // パース
-  parse();
+  program();
 
   // アセンブリの最初の部分を出力
   printf(".intel_syntax noprefix\n");
   printf(".globl main\n");
+  printf("main:\n");
+
+  // プロローグ
+  // ローカル変数の領域を確保する
+  printf("  #prologue\n");
+  printf("  push rbp\n");
+  printf("  mov rbp, rsp\n");
+  printf("  sub rsp, %d\n", locals->offset);
 
   // 先頭の式から順にコード生成
   label_if = 0;    // ifのラベル
@@ -29,6 +37,13 @@ int main(int argc, char **argv) {
     printf("\n  #statement %d\n", i);
     gen(code[i]);
   }
+
+  // エピローグ
+  // 式の評価結果として最終的にスタックに1つの値が残っているのでそれを返り値にする
+  printf("  pop rax\n");
+  printf("  mov rsp, rbp\n");
+  printf("  pop rbp\n");
+  printf("  ret\n");
 
   return 0;
 }
