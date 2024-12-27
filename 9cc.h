@@ -49,8 +49,6 @@ typedef enum {
   ND_IF,        // if
   ND_WHILE,     // while
   ND_FOR,       // for
-  ND_ADDR,      // &
-  ND_DEREF,     // *
   ND_ADD,       // +
   ND_SUB,       // -
   ND_MUL,       // *

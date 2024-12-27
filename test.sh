@@ -59,6 +59,5 @@ assert 77 "argument(77);"
 assert 30 "add2args(20, 10);"
 assert 21 "add6args(1, 2, 3, 4, 5, 6);"
 assert 20 "ten = 10; return add2args(ten, 10);"
-assert 10 "a = 10; b = &a; return *b;"
 
 echo OK

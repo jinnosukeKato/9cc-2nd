@@ -3,7 +3,8 @@
 void gen_comment(Node *node) { printf("  #%d\n", node->kind); }
 
 void gen_lval(Node *node) {
-  if (node->kind != ND_LVAR) error_at(token->str, "変数ではありません");
+  if (node->kind != ND_LVAR)
+    error_at(token->str, "代入の左辺値が変数ではありません");
 
   // RBP(ベースポインタ)からローカル変数の位置を計算してpush
   printf("  mov rax, rbp\n");
@@ -134,17 +135,6 @@ void gen(Node *node) {
       printf("  mov rsp, rbp\n");
       printf("  pop rbp\n");
       printf("  ret\n");
-      return;
-
-    case ND_ADDR:
-      gen_lval(node->lhs);
-      return;
-
-    case ND_DEREF:
-      gen(node->lhs);
-      printf("  pop rax\n");
-      printf("  mov rax, [rax]\n");  // raxの値をアドレスとして読んでraxに代入
-      printf("  push rax\n");  // スタックに積む
       return;
 
     case ND_LVAR:
