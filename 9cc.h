@@ -29,7 +29,6 @@ struct Token {
   int len;         // トークンの長さ
 };
 
-void error(char *fmt, ...);
 void error_at(char *loc, char *fmt, ...);
 bool consume(char *op);
 bool consume_token(TokenKind tok);
