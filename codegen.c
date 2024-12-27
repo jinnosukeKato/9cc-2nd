@@ -154,9 +154,11 @@ void gen(Node *node) {
     case ND_FOR:
       if (node->init) gen(node->init);  // 初期化式
       printf(".Lfor_begin%d:\n", label_for);
-      if (node->cond) gen(node->cond);  // 継続条件式
-      printf("  pop rax\n");
-      printf("  cmp rax, 0\n");                 // 継続条件が偽か
+      if (node->cond) {
+        gen(node->cond);  // 継続条件式
+        printf("  pop rax\n");
+        printf("  cmp rax, 0\n");  // 継続条件が偽か
+      }
       printf("  je .Lfor_end%d\n", label_for);  // 継続条件が偽ならendにjump
       gen(node->stmt);                          // forの中身
       if (node->inc) gen(node->inc);  // インクリメント式?(名前わからん)
