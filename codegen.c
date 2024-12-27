@@ -142,8 +142,10 @@ void gen(Node *node) {
 
     case ND_WHILE:
       printf(".Lwhl_begin%d:\n", label_while);
-      gen(node->lhs);  // expr
-      printf("  pop rax\n");
+      if (node->cond) {
+        gen(node->cond);  // expr
+        printf("  pop rax\n");
+      }
       printf("  cmp rax, 0\n");                   // 条件式が偽か判定
       printf("  je .Lwhl_end%d\n", label_while);  // 偽なら終わりにjump
       gen(node->rhs);
