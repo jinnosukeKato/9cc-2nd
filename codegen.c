@@ -67,9 +67,6 @@ void gen(Node *node) {
       return;
 
     case ND_FUNCCALL:
-      if (node->offset % 16 != 0)
-        printf("  sub rsp, 0x8\n");  // RSPを16の倍数にalignmentする
-
       // 引数の評価
       if (node->arg[0]) {
         gen(node->arg[0]);
@@ -96,6 +93,7 @@ void gen(Node *node) {
         printf("  pop r9\n");
       }
 
+      printf("  and rsp, -16\n");  // RSPを16の倍数にalignmentする
       printf("  call %.*s\n", node->len, node->name);
       printf("  push rax\n");
       return;

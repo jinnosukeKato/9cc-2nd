@@ -78,3 +78,19 @@ pop rax
 
 1. スタックが破壊されていた
 1. スタックを16 bitでalignmentしていなかった
+
+#### 解決方法
+
+[この方の解決法](https://github.com/takoeight0821/hoc_nyan/commit/d4d460948d12f7cf4f6e05a433dadfc9a5d8c647)を使った
+
+`and rsp, -16`を`call`前で呼ぶことで，強制的に16以上の桁が1で埋められて，切り下げられる．
+
+ChatGPTに聞いたらこの解説が帰ってきて分かりやすかった．
+
+```java
+If rsp = 0x7FFF_FFF8, then:
+rsp AND -16 = 0x7FFF_FFF0
+
+If rsp = 0x7FFF_FFFD, then:
+rsp AND -16 = 0x7FFF_FFF0
+```
