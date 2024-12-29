@@ -64,4 +64,6 @@ assert 30 "main() {return add2args(20, 10);}"
 assert 19 "bar(a) return a; main() {return bar(19);}"
 assert 21 "add6args(a, b, c, d, e, f) {return a + b + c + d + e + f;} main() { return add6args(1, 2, 3, 4, 5, 6);}"
 
+assert 3 "main() { x = 3; y = &x; return *y;}"
+
 echo OK

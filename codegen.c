@@ -166,6 +166,17 @@ void gen(Node *node) {
       printf(".Lfor_end%d:\n", label_for++);
       return;
 
+    case ND_ADDR:
+      gen_lval(node->lhs);
+      return;
+
+    case ND_DEREF:
+      gen(node->lhs);
+      printf("  pop rax\n");
+      printf("  mov rax, [rax]\n");
+      printf("  push rax\n");
+      return;
+
     case ND_RETURN:
       gen(node->lhs);
       printf("  pop rax\n");  // スタックトップ(式の結果があるはず)からraxにpop

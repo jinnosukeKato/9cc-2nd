@@ -51,6 +51,8 @@ typedef enum {
   ND_IF,        // if
   ND_WHILE,     // while
   ND_FOR,       // for
+  ND_ADDR,      // &
+  ND_DEREF,     // *
   ND_ADD,       // +
   ND_SUB,       // -
   ND_MUL,       // *
@@ -110,6 +112,7 @@ extern char *user_input;
 extern Node *code[100];
 
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs);
+Node *new_unary_node(NodeKind kind, Node *lhs);
 Node *new_node_num(int val);
 
 void program();
