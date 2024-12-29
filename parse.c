@@ -29,6 +29,8 @@ Node *new_node_num(int val) {
 }
 
 LIdent *new_ident(Token *tok) {
+  if (!tok) error("変数ではありません");
+
   LIdent *ident = calloc(1, sizeof(LIdent));
   ident->next = locals;
   ident->name = tok->str;
@@ -55,30 +57,31 @@ void program() {
 }
 
 /*
-  function := ident "(" (" (equality ",")? " ")" stmt
+  function := "int" ident "(" (" (equality ",")? " ")" stmt
 */
 Node *function() {
+  expect("int");
+
   Node *node = calloc(1, sizeof(Node));
   node->kind = ND_FUNCTION;
   Token *tok = consume_ident();
   if (!tok) error("識別子ではありません");
 
-  LIdent *ident = find_ident(tok);
-  if (!ident) {
-    ident = calloc(1, sizeof(LIdent));
-    ident->next = locals;
-    ident->name = tok->str;
-    ident->len = tok->len;
-    ident->offset = locals->offset;  // ローカル変数のためにオフセットを保存
-    locals = ident;
-  }
+  LIdent *ident = calloc(1, sizeof(LIdent));
+  ident->next = locals;
+  ident->name = tok->str;
+  ident->len = tok->len;
+  ident->offset = locals->offset;  // ローカル変数のためにオフセットを保存
+  locals = ident;
 
   node->len = ident->len;
   node->name = ident->name;
 
   expect("(");
   while (!consume(")")) {
-    consume_ident();
+    expect("int");
+    Token *tok = consume_ident();
+    new_ident(tok);
     consume(",");  // カンマがあれば読み飛ばす
     node->arg_len += 1;
     // todo:
@@ -177,9 +180,25 @@ Node *stmt() {
 // expr := assign();
 Node *expr() { return assign(); }
 
-// assign := equality ("=" assign)?
+/*
+assign := equality ("=" assign)?
+        | "int" ident ("=" assign)?
+*/
 Node *assign() {
-  Node *node = equality();
+  Node *node;
+  if (consume("int")) {
+    Token *tok = consume_ident();
+    LIdent *ident = new_ident(tok);
+
+    node = calloc(1, sizeof(Node));
+    node->kind = ND_LVAR;
+    node->offset = ident->offset;
+    node->name = ident->name;
+    node->len = ident->len;
+  } else {
+    node = equality();
+  }
+
   if (consume("=")) node = new_node(ND_ASSIGN, node, assign());
 
   return node;
@@ -284,16 +303,18 @@ Node *primary() {
     node->kind = ND_LVAR;
 
     LIdent *ident = find_ident(tok);
-    if (!ident) {
-      // その識別子が存在しなければ新しく作成する
-      ident = new_ident(tok);
+    bool is_func = consume("(");
+    if (!ident && !is_func) {
+      error("変数 %.*s は宣言されていません", tok->len, tok->str);
     }
+
+    if (!ident) ident = new_ident(tok);
 
     node->offset = ident->offset;
     node->name = ident->name;
     node->len = ident->len;
 
-    if (consume("(")) {
+    if (is_func) {
       node->kind = ND_FUNCCALL;
       for (int i = 0; i < 6; i++) {
         if (consume(")")) return node;
