@@ -3,8 +3,18 @@
 void gen_comment(Node *node) { printf("  #%d\n", node->kind); }
 
 void gen_lval(Node *node) {
-  if (node->kind != ND_LVAR)
+  if (node->kind == ND_DEREF) {
+    // ポインタ変数の処理
+    gen(node->lhs);
+    printf("  pop rax\n");
+    printf("  mov rax, [rax]\n");
+    printf("  push rax\n");
+    return;
+  }
+
+  if (node->kind != ND_LVAR) {
     error_at(token->str, "代入の左辺値が変数ではありません");
+  }
 
   // RBP(ベースポインタ)からローカル変数の位置を計算してpush
   printf("  mov rax, rbp\n");

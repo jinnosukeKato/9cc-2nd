@@ -28,14 +28,16 @@ Node *new_node_num(int val) {
   return node;
 }
 
-LIdent *new_ident(Token *tok) {
+LIdent *new_ident(Token *tok, Type *type) {
   if (!tok) error("変数ではありません");
 
   LIdent *ident = calloc(1, sizeof(LIdent));
   ident->next = locals;
+  ident->offset = locals->offset + 8;
+  ident->type = type;
+
   ident->name = tok->str;
   ident->len = tok->len;
-  ident->offset = locals->offset + 8;
   locals = ident;
 }
 
@@ -80,8 +82,12 @@ Node *function() {
   expect("(");
   while (!consume(")")) {
     expect("int");
+
     Token *tok = consume_ident();
-    new_ident(tok);
+    Type *type_int = calloc(1, sizeof(Type));
+    type_int->type = INT;
+    new_ident(tok, type_int);
+
     consume(",");  // カンマがあれば読み飛ばす
     node->arg_len += 1;
     // todo:
@@ -187,8 +193,18 @@ assign := equality ("=" assign)?
 Node *assign() {
   Node *node;
   if (consume("int")) {
+    Type *type = calloc(1, sizeof(Type));
+    type->type = INT;
+
+    while (consume("*")) {
+      Type *type_ptr = calloc(1, sizeof(Type));
+      type_ptr->type = PTR;
+      type_ptr->ptr_to = type;
+      type = type_ptr;
+    }
+
     Token *tok = consume_ident();
-    LIdent *ident = new_ident(tok);
+    LIdent *ident = new_ident(tok, type);
 
     node = calloc(1, sizeof(Node));
     node->kind = ND_LVAR;
@@ -308,7 +324,7 @@ Node *primary() {
       error("変数 %.*s は宣言されていません", tok->len, tok->str);
     }
 
-    if (!ident) ident = new_ident(tok);
+    if (!ident) ident = new_ident(tok, NULL);
 
     node->offset = ident->offset;
     node->name = ident->name;

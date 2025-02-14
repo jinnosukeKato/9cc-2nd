@@ -65,5 +65,6 @@ assert 19 "int bar(int a) return a; int main() {return bar(19);}"
 assert 21 "int add6args(int a, int b, int c, int d, int e, int f) {return a + b + c + d + e + f;} int main() { return add6args(1, 2, 3, 4, 5, 6);}"
 
 assert 3 "int main() { int x = 3; int y = &x; return *y;}"
+assert 3 "int main() { int x; int *y; y = &x; *y = 3; return x; }"
 
 echo OK

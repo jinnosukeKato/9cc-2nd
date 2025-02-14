@@ -95,14 +95,23 @@ struct Node {
   int arg_len;   // 関数における引数の個数
 };
 
+// ポインタ型
+typedef struct Type Type;
+
+struct Type {
+  enum { INT, PTR } type;
+  struct Type *ptr_to;
+};
+
 // ローカル識別子の型
 typedef struct LIdent LIdent;
 
 struct LIdent {
   LIdent *next;  // 次のローカル識別子かNULL
+  int offset;    // RBPからのオフセット
+  Type *type;     // 型
   char *name;    // 識別子
   int len;       // 識別子の長さ
-  int offset;    // RBPからのオフセット
 };
 
 extern LIdent *locals;
