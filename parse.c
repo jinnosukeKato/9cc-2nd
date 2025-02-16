@@ -23,6 +23,11 @@ Node *new_unary_node(NodeKind kind, Node *lhs) {
 
 Node *new_node_num(int val) {
   Node *node = calloc(1, sizeof(Node));
+
+  Type *type = calloc(1, sizeof(Type));
+  type->type = INT;
+
+  node->type = type;
   node->kind = ND_NUM;
   node->val = val;
   return node;
@@ -208,6 +213,7 @@ Node *assign() {
 
     node = calloc(1, sizeof(Node));
     node->kind = ND_LVAR;
+    node->type = type;
     node->offset = ident->offset;
     node->name = ident->name;
     node->len = ident->len;
@@ -259,10 +265,22 @@ Node *add() {
   Node *node = mul();
 
   for (;;) {
-    if (consume("+"))
-      node = new_node(ND_ADD, node, mul());
-    else if (consume("-"))
-      node = new_node(ND_SUB, node, mul());
+    if (consume("+")) {
+      Node *add_node = new_node(ND_ADD, node, mul());
+
+      // ptr + n -> ptr + n*sizeof(*ptr)
+      if (add_node->lhs->type->type == PTR &&
+          add_node->rhs->type->type == INT) {
+        Node *n = new_node_num(add_node->rhs->val);
+        Node *size = new_node_num(sizeof(add_node->lhs->type->ptr_to));
+        node = new_node(ND_ADD, node, new_node(ND_MUL, n, size));
+        node->type = add_node->lhs->type;
+        return node;
+      } else {
+        return add_node;
+      }
+    } else if (consume("-"))
+      return new_node(ND_SUB, node, mul());
     else
       return node;
   }
@@ -326,6 +344,7 @@ Node *primary() {
 
     if (!ident) ident = new_ident(tok, NULL);
 
+    node->type = ident->type;
     node->offset = ident->offset;
     node->name = ident->name;
     node->len = ident->len;

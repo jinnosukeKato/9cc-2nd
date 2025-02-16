@@ -17,6 +17,7 @@ assert() {
   fi
 }
 
+assert 8 "int main() { int *p; alloc4(&p, 1, 2, 4, 8); int *q; q = p + 3; return *q;}"
 assert 0 "int main() return 0;"
 assert 42 "int main() return 42;"
 assert 21 "int main() return 5+20-4;"

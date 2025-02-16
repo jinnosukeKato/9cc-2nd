@@ -68,9 +68,13 @@ typedef enum {
 
 typedef struct Node Node;
 
+// ポインタ型
+typedef struct Type Type;
+
 // 抽象構文木のノードの型
 struct Node {
   NodeKind kind;  // ノードの種類
+  Type *type;     // ノードの型情報
 
   Node *next;  // ブロックの次の行
 
@@ -95,9 +99,6 @@ struct Node {
   int arg_len;   // 関数における引数の個数
 };
 
-// ポインタ型
-typedef struct Type Type;
-
 struct Type {
   enum { INT, PTR } type;
   struct Type *ptr_to;
@@ -109,7 +110,7 @@ typedef struct LIdent LIdent;
 struct LIdent {
   LIdent *next;  // 次のローカル識別子かNULL
   int offset;    // RBPからのオフセット
-  Type *type;     // 型
+  Type *type;    // 型
   char *name;    // 識別子
   int len;       // 識別子の長さ
 };
